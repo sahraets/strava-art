@@ -28,9 +28,9 @@ public class StravaAuthController {
     }
 
     @GetMapping("/exchange_token")
-    public String exchangeToken(@RequestParam("code") String code) {
+    public RedirectView exchangeToken(@RequestParam("code") String code) {
         authService.exchangeCodeForToken(code);
-        return "Innlogging velykket! Du kan lukke dette vinduet.";
+        return new RedirectView("/");
     }
 
     @GetMapping("/api/status")

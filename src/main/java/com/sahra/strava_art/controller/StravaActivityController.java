@@ -17,7 +17,7 @@ public class StravaActivityController {
         this.activityService = activityService;
     }
 
-    @GetMapping(value = "/api/activities", produces = "application/jon; charset=UTF-8")
+    @GetMapping(value = "/api/activities", produces = "application/json; charset=UTF-8")
     public List<ActivityDto> activities() {
         return activityService.getActivities();
     }
