@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ruter → Kunst</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&display=swap">
+
     <style>
         :root {
+            --display:     "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
+            --mono:        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
             --bg:          #f4efe4;
             --bg-soft:     #ebe4d5;
             --surface:     #faf7f0;
@@ -85,9 +93,9 @@
         }
 
         .wrap {
-            max-width: 1080px;
+            max-width: 1140px;
             margin: 0 auto;
-            padding: 0 24px 96px;
+            padding: 0 32px 120px;
         }
 
         .topbar {
@@ -95,15 +103,16 @@
             align-items: center;
             justify-content: space-between;
             gap: 16px;
-            padding: 24px 0;
+            padding: 28px 0;
         }
 
         .mark {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.78rem;
-            letter-spacing: 0.14em;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             color: var(--ink-muted);
         }
@@ -114,10 +123,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border: 1px solid var(--line);
-            border-radius: 999px;
+            border-radius: 0;
             background: transparent;
             color: var(--ink);
             cursor: pointer;
@@ -136,28 +145,34 @@
         }
 
         .hero {
-            padding: 56px 0 40px;
-            border-bottom: 1px solid var(--line);
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 260px;
+            align-items: start;
+            gap: 64px;
+            padding: 80px 0 64px;
+            border-bottom: 1px solid var(--line-strong);
         }
 
         .hero h1 {
             margin: 0;
-            font-family: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
-            font-weight: 400;
-            font-size: clamp(2.6rem, 7vw, 4.6rem);
-            line-height: 1.02;
-            letter-spacing: -0.02em;
+            font-family: var(--display);
+            font-optical-sizing: none;
+            font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+            font-weight: 300;
+            font-size: clamp(3rem, 8.5vw, 6rem);
+            line-height: 0.92;
+            letter-spacing: -0.035em;
         }
 
         .hero h1 em {
             font-style: italic;
-            color: var(--ink-muted);
+            font-variation-settings: "opsz" 144, "SOFT" 90, "WONK" 1;
         }
 
         .hero p {
-            margin: 20px 0 0;
-            max-width: 46ch;
-            font-size: 1.05rem;
+            margin: 28px 0 0;
+            max-width: 42ch;
+            font-size: 1rem;
             color: var(--ink-muted);
         }
 
@@ -165,56 +180,71 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 14px;
-            margin-top: 32px;
+            gap: 32px;
+            margin-top: 40px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 22px;
-            border-radius: 999px;
-            border: 1px solid transparent;
-            background: var(--btn-bg);
-            color: var(--btn-ink);
-            font: inherit;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: transform 0.15s ease, opacity 0.2s ease;
-        }
-
-        .btn:hover { opacity: 0.88; transform: translateY(-1px); }
-        .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-
-        .btn-ghost {
+            padding: 0 0 5px;
+            border: 0;
+            border-bottom: 1px solid var(--ink);
+            border-radius: 0;
             background: transparent;
             color: var(--ink);
-            border-color: var(--line-strong);
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: gap 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
+
+        .btn:hover { gap: 14px; }
+        .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 5px; }
+
+        .btn-ghost {
+            color: var(--ink-muted);
+            border-bottom-color: var(--line-strong);
+        }
+
+        .btn-ghost:hover { color: var(--ink); border-bottom-color: var(--ink); }
 
         .stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px;
-            padding: 28px 0;
-            border-bottom: 1px solid var(--line);
+            border-top: 1px solid var(--ink);
+            border-bottom: 1px solid var(--ink);
+            margin-top: 14px;
         }
 
-        .stats[hidden] { display: none; }
+        .stat {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 13px 0;
+        }
+
+        .stat + .stat { border-top: 1px solid var(--line); }
 
         .stat-label {
-            font-size: 0.72rem;
-            letter-spacing: 0.12em;
+            font-family: var(--mono);
+            font-size: 0.66rem;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             color: var(--ink-faint);
         }
 
         .stat-value {
-            font-family: ui-serif, Georgia, "Times New Roman", serif;
-            font-size: 1.9rem;
-            line-height: 1.2;
+            font-family: var(--display);
+            font-optical-sizing: none;
+            font-variation-settings: "opsz" 40, "SOFT" 50, "WONK" 1;
+            font-weight: 400;
+            font-size: 1.45rem;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
         }
 
         .section-head {
@@ -222,36 +252,37 @@
             align-items: baseline;
             justify-content: space-between;
             gap: 16px;
-            padding: 40px 0 20px;
+            padding: 72px 0 28px;
         }
 
-        .section-head h2 {
+        .section-head h2,
+        .section-index {
             margin: 0;
-            font-size: 0.78rem;
-            letter-spacing: 0.14em;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-            font-weight: 500;
+            font-weight: 400;
             color: var(--ink-muted);
+        }
+
+        .section-index {
+            color: var(--ink-faint);
+            font-variant-numeric: tabular-nums;
         }
 
         #gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            column-gap: 36px;
+            row-gap: 64px;
         }
 
         .card {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-            border-color: var(--line-strong);
+            background: none;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
         }
 
         .card canvas {
@@ -260,58 +291,73 @@
             height: auto;
             aspect-ratio: 1 / 1;
             background: var(--surface);
+            border: 1px solid var(--line);
+            transition: border-color 0.2s ease;
         }
+
+        .card:hover canvas { border-color: var(--line-strong); }
 
         .card-body {
-            padding: 16px 18px 18px;
-            border-top: 1px solid var(--line);
-        }
-
-        .card-title {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 500;
-            line-height: 1.35;
-            overflow-wrap: anywhere;
-        }
-
-        .card-meta {
-            margin: 6px 0 0;
-            font-size: 0.82rem;
-            color: var(--ink-faint);
+            margin-top: 14px;
+            padding-top: 10px;
+            border-top: 1px solid var(--ink);
         }
 
         .card-figures {
             display: flex;
-            gap: 18px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--line);
-            font-size: 0.85rem;
-            color: var(--ink-muted);
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            font-family: var(--mono);
+            font-size: 0.66rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-faint);
             font-variant-numeric: tabular-nums;
         }
 
-        .note {
-            padding: 56px 24px;
-            text-align: center;
-            border: 1px dashed var(--line-strong);
-            border-radius: 14px;
+        .card-title {
+            margin: 9px 0 0;
+            font-family: var(--display);
+            font-optical-sizing: none;
+            font-variation-settings: "opsz" 40, "SOFT" 60, "WONK" 1;
+            font-size: 1.15rem;
+            font-weight: 400;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+            overflow-wrap: anywhere;
+        }
+
+        .card-meta {
+            margin: 5px 0 0;
+            font-size: 0.8rem;
             color: var(--ink-muted);
+        }
+
+        .note {
+            padding: 72px 0;
+            border-top: 1px solid var(--ink);
+            border-bottom: 1px solid var(--line);
+            color: var(--ink-muted);
+            max-width: 46ch;
         }
 
         .note strong {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            font-family: var(--display);
+            font-optical-sizing: none;
+            font-variation-settings: "opsz" 60, "SOFT" 60, "WONK" 1;
+            font-size: 1.5rem;
+            font-weight: 400;
             color: var(--ink);
-            font-weight: 500;
         }
 
         .skeleton {
             background: var(--bg-soft);
             border: 1px solid var(--line);
-            border-radius: 14px;
-            aspect-ratio: 1 / 1.28;
+            border-radius: 0;
+            aspect-ratio: 1 / 1;
             animation: pulse 1.6s ease-in-out infinite;
         }
 
@@ -325,11 +371,32 @@
         }
 
         footer {
-            margin-top: 64px;
+            margin-top: 96px;
             padding-top: 24px;
             border-top: 1px solid var(--line);
-            font-size: 0.8rem;
+            font-family: var(--mono);
+            font-size: 0.66rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
             color: var(--ink-faint);
+        }
+
+        @media (max-width: 860px) {
+            .wrap { padding: 0 20px 80px; }
+
+            .hero {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 40px;
+                padding: 48px 0 40px;
+            }
+
+            .section-head { padding: 48px 0 24px; }
+
+            #gallery {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                column-gap: 24px;
+                row-gap: 48px;
+            }
         }
     </style>
 </head>
@@ -361,32 +428,35 @@
     </div>
 
     <header class="hero">
-        <h1>Rutene dine,<br><em>som kunst.</em></h1>
-        <p>Hver tur du har løpt eller syklet blir tegnet opp som en egen strek. Koble til
-            Strava for å se samlingen din.</p>
-        <div class="actions">
-            <a class="btn" href="/login" id="loginBtn">Logg inn med Strava</a>
-            <button class="btn btn-ghost" id="refreshBtn" type="button">Oppdater</button>
+        <div class="hero-main">
+            <h1>Rutene dine,<br><em>som kunst.</em></h1>
+            <p>Hver tur du har løpt eller syklet blir tegnet opp som en egen strek. Koble til
+                Strava for å se samlingen din.</p>
+            <div class="actions">
+                <a class="btn" href="/login" id="loginBtn">Logg inn med Strava <span aria-hidden="true">→</span></a>
+                <button class="btn btn-ghost" id="refreshBtn" type="button">Oppdater</button>
+            </div>
         </div>
-    </header>
 
-    <section class="stats" id="stats" hidden>
-        <div>
-            <div class="stat-label">Aktiviteter</div>
-            <div class="stat-value" id="statCount">–</div>
-        </div>
-        <div>
-            <div class="stat-label">Distanse</div>
-            <div class="stat-value" id="statDistance">–</div>
-        </div>
-        <div>
-            <div class="stat-label">Høydemeter</div>
-            <div class="stat-value" id="statElevation">–</div>
-        </div>
-    </section>
+        <section class="stats" id="stats" hidden>
+            <div class="stat">
+                <span class="stat-label">Aktiviteter</span>
+                <span class="stat-value" id="statCount">–</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Distanse</span>
+                <span class="stat-value" id="statDistance">–</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Høyde</span>
+                <span class="stat-value" id="statElevation">–</span>
+            </div>
+        </section>
+    </header>
 
     <div class="section-head">
         <h2>Galleri</h2>
+        <span class="section-index" id="galleryIndex"></span>
     </div>
 
     <div id="gallery"></div>
@@ -623,9 +693,13 @@ function drawRoute(canvas, points, seed, weather) {
 
     const gallery = document.getElementById('gallery');
     const stats = document.getElementById('stats');
+    const galleryIndex = document.getElementById('galleryIndex');
+
+    const pad = n => String(n).padStart(2, '0');
 
     function showSkeletons(n = 6) {
         stats.hidden = true;
+        galleryIndex.textContent = '';
         gallery.innerHTML = '';
         for (let i = 0; i < n; i++) {
             const el = document.createElement('div');
@@ -636,6 +710,7 @@ function drawRoute(canvas, points, seed, weather) {
 
     function showNote(title, body) {
         stats.hidden = true;
+        galleryIndex.textContent = '';
         gallery.innerHTML = '';
         gallery.style.gridTemplateColumns = '1fr';
         const note = document.createElement('div');
@@ -654,9 +729,12 @@ function drawRoute(canvas, points, seed, weather) {
         document.getElementById('statDistance').textContent = nf.format(km) + ' km';
         document.getElementById('statElevation').textContent = Math.round(elev) + ' m';
         stats.hidden = false;
+        galleryIndex.textContent = activities.length
+            ? pad(1) + ' — ' + pad(activities.length)
+            : '';
     }
 
-    function renderCard(activity) {
+    function renderCard(activity, index) {
         const card = document.createElement('article');
         card.className = 'card';
 
@@ -671,6 +749,16 @@ function drawRoute(canvas, points, seed, weather) {
         const body = document.createElement('div');
         body.className = 'card-body';
 
+        const figures = document.createElement('div');
+        figures.className = 'card-figures';
+        const num = document.createElement('span');
+        num.textContent = pad(index + 1);
+        const measures = document.createElement('span');
+        measures.textContent = nf.format((activity.distanceMeters || 0) / 1000) + ' km · '
+            + Math.round(activity.elevationGainMeters || 0) + ' m ↑';
+        figures.append(num, measures);
+        body.appendChild(figures);
+
         const title = document.createElement('h3');
         title.className = 'card-title';
         title.textContent = activity.name || 'Uten navn';
@@ -681,15 +769,6 @@ function drawRoute(canvas, points, seed, weather) {
         meta.textContent = [TYPE_NAMES[activity.type] || activity.type, formatDate(activity.date)]
             .filter(Boolean).join(' · ');
         body.appendChild(meta);
-
-        const figures = document.createElement('div');
-        figures.className = 'card-figures';
-        const dist = document.createElement('span');
-        dist.textContent = nf.format((activity.distanceMeters || 0) / 1000) + ' km';
-        const elev = document.createElement('span');
-        elev.textContent = Math.round(activity.elevationGainMeters || 0) + ' m ↑';
-        figures.append(dist, elev);
-        body.appendChild(figures);
 
         card.appendChild(body);
         gallery.appendChild(card);
