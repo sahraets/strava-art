@@ -1,6 +1,8 @@
 package com.sahra.strava_art.dto;
 
-public record WeatherInfo() {
+public record WeatherInfo(double temperatureCelsius, double precipitationMm, int weatherCode) {
 
-    //test adding
+    public static WeatherInfo unknown() {
+        return new WeatherInfo(Double.NaN, Double.NaN, -1);
+    }
 }
