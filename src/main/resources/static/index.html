@@ -432,9 +432,39 @@
         };
     }
 
+    function temperatureToHue(tempC) {
+    const minTemp = -5, maxTemp = 30;
+    const clamped = Math.max(minTemp, Math.min(maxTemp, tempC));
+    const t = (clamped - minTemp) / (maxTemp - minTemp); // 0 = kaldt, 1 = varmt
+    return 250 - t * 240; // 250 = blå/lilla (kaldt) ... 10 = rød/oransje (varmt)
+}
 
-    function drawWatercolorBackground(ctx, size, random, hue) {
-    const blobCount = 5 + Math.floor(random() * 4);
+function weatherStyle(weatherCode) {
+    if (weatherCode === 0 || weatherCode === 1) {
+        return { blobCount: [3, 5], blobAlpha: 0.28, saturation: 82, lightness: 30, lineAlpha: 0.65, lineWidth: 1.4, layers: [4, 9], mode: 'kaleidoscope' };
+    }
+    if (weatherCode === 2 || weatherCode === 3) {
+        return { blobCount: [5, 8], blobAlpha: 0.35, saturation: 70, lightness: 34, lineAlpha: 0.55, lineWidth: 1.6, layers: [3, 8], mode: 'flow' };
+    }
+    if (weatherCode === 45 || weatherCode === 48) {
+        return { blobCount: [7, 10], blobAlpha: 0.45, saturation: 40, lightness: 55, lineAlpha: 0.4, lineWidth: 1.8, layers: [3, 6], mode: 'particles' };
+    }
+    if ((weatherCode >= 51 && weatherCode <= 67) || (weatherCode >= 80 && weatherCode <= 82)) {
+        return { blobCount: [6, 9], blobAlpha: 0.4, saturation: 55, lightness: 40, lineAlpha: 0.45, lineWidth: 1.3, layers: [3, 7], mode: 'flow' };
+    }
+    if (weatherCode >= 71 && weatherCode <= 77) {
+        return { blobCount: [4, 6], blobAlpha: 0.25, saturation: 30, lightness: 65, lineAlpha: 0.6, lineWidth: 1.5, layers: [3, 6], mode: 'particles' };
+    }
+    if (weatherCode >= 95) {
+        return { blobCount: [8, 12], blobAlpha: 0.5, saturation: 85, lightness: 25, lineAlpha: 0.7, lineWidth: 1.8, layers: [5, 10], mode: 'kaleidoscope' };
+    }
+    return null;
+}
+
+
+    function drawWatercolorBackground(ctx, size, random, hue, style) {
+    const [minBlobs, maxBlobs] = style.blobCount;
+    const blobCount = minBlobs + Math.floor(random() * (maxBlobs - minBlobs + 1));
 
     for (let i = 0; i < blobCount; i++) {
         const blobHue = (hue + (random() - 0.5) * 140 + 360) % 360;
@@ -443,8 +473,8 @@
         const radius = size * (0.35 + random() * 0.45);
 
         const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-        gradient.addColorStop(0, `hsla(${blobHue}, 70%, 60%, 0.35)`);
-        gradient.addColorStop(1, `hsla(${blobHue}, 70%, 60%, 0)`);
+        gradient.addColorStop(0, `hsla(${blobHue}, ${style.saturation}%, ${style.lightness}%, ${style.blobAlpha})`);
+        gradient.addColorStop(1, `hsla(${blobHue}, ${style.saturation}%, ${style.lightness}%, 0)`);
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
@@ -453,73 +483,126 @@
     }
 }
 
-    function drawRoute(canvas, points, seed) {
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = SIZE * dpr;
-        canvas.height = SIZE * dpr;
+function drawKaleidoscope(ctx, shapePoints, hue, style, random) {
+    const [minLayers, maxLayers] = style.layers;
+    const layers = minLayers + Math.floor(random() * (maxLayers - minLayers + 1));
 
-        const ctx = canvas.getContext('2d');
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        ctx.fillStyle = cssVar('--surface');
-        ctx.fillRect(0, 0, SIZE, SIZE);
-
-        if (!points || points.length === 0) return;
-
-        const lats = points.map(p => p.lat);
-        const lngs = points.map(p => p.lng);
-        const minLat = Math.min(...lats), maxLat = Math.max(...lats);
-        const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
-
-        const latSpan = Math.max(maxLat - minLat, 1e-9);
-        const lngSpan = Math.max((maxLng - minLng) * Math.cos((minLat + maxLat) / 2 * Math.PI / 180), 1e-9);
-
-        const scale = Math.min((SIZE - PADDING * 2) / lngSpan, (SIZE - PADDING * 2) / latSpan) * 0.68;
-        const cosLat = Math.cos((minLat + maxLat) / 2 * Math.PI / 180);
-
-        const centerLng = (minLng + maxLng) / 2;
-        const centerLat = (minLat + maxLat) / 2;
-        const shapePoints = points.map(p => ({
-            x: (p.lng - centerLng) * cosLat * scale,
-            y: -(p.lat - centerLat) * scale
-        }));
-
-        const random = seededRandom(seed || 1);
-        const hue = Math.floor(random() * 360);
-
-        drawWatercolorBackground(ctx, SIZE, random, hue);
-
-        const layers = 3 + Math.floor(random() * 6);
-
+    for (let i = 0; i < layers; i++) {
         ctx.save();
-        ctx.translate(SIZE / 2, SIZE / 2);
-
-        for (let i = 0; i < layers; i++) {
-            ctx.save();
-            ctx.rotate((Math.PI * 2 * i) / layers);
-
-            ctx.strokeStyle = `hsl(${hue}, 75%, 32%)`;
-            ctx.globalAlpha = 0.55;
-            ctx.lineWidth = 1.6;
-            ctx.lineJoin = 'round';
-            ctx.lineCap = 'round';
-
-            ctx.beginPath();
-            shapePoints.forEach((p, j) => {
-                if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
-            });
-            ctx.stroke();
-
-            ctx.restore();
-        }
-
+        ctx.rotate((Math.PI * 2 * i) / layers);
+        ctx.strokeStyle = `hsl(${hue}, ${style.saturation}%, ${Math.max(style.lightness - 20, 15)}%)`;
+        ctx.globalAlpha = style.lineAlpha;
+        ctx.lineWidth = style.lineWidth;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        shapePoints.forEach((p, j) => {
+            if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        });
+        ctx.stroke();
         ctx.restore();
     }
+}
 
-    function redrawAll() {
-        document.querySelectorAll('#gallery canvas').forEach(canvas => {
-            if (canvas._points) drawRoute(canvas, canvas._points, canvas._id);
+function drawFlow(ctx, shapePoints, hue, style, random) {
+    const strands = 4 + Math.floor(random() * 5);
+    for (let s = 0; s < strands; s++) {
+        const offsetX = (random() - 0.5) * 24;
+        const offsetY = (random() - 0.5) * 24;
+        const lightness = Math.max(style.lightness - 15 + random() * 20, 15);
+        ctx.strokeStyle = `hsl(${hue}, ${style.saturation}%, ${lightness}%)`;
+        ctx.globalAlpha = style.lineAlpha * (0.4 + random() * 0.5);
+        ctx.lineWidth = style.lineWidth * (0.8 + random() * 1.6);
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        shapePoints.forEach((p, j) => {
+            const x = p.x + offsetX;
+            const y = p.y + offsetY;
+            if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
+        ctx.stroke();
+    }
+}
+
+function drawParticles(ctx, shapePoints, hue, style, random) {
+    const step = Math.max(1, Math.floor(shapePoints.length / 220));
+    for (let i = 0; i < shapePoints.length; i += step) {
+        const p = shapePoints[i];
+        const jitterX = (random() - 0.5) * 18;
+        const jitterY = (random() - 0.5) * 18;
+        const radius = 1 + random() * 3;
+        const lightness = Math.max(style.lightness - 10 + random() * 30, 15);
+        ctx.fillStyle = `hsla(${hue}, ${style.saturation}%, ${lightness}%, ${style.lineAlpha * (0.4 + random() * 0.6)})`;
+        ctx.beginPath();
+        ctx.arc(p.x + jitterX, p.y + jitterY, radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function drawRoute(canvas, points, seed, weather) {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = SIZE * dpr;
+    canvas.height = SIZE * dpr;
+
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    ctx.fillStyle = cssVar('--surface');
+    ctx.fillRect(0, 0, SIZE, SIZE);
+
+    if (!points || points.length === 0) return;
+
+    const lats = points.map(p => p.lat);
+    const lngs = points.map(p => p.lng);
+    const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+
+    const latSpan = Math.max(maxLat - minLat, 1e-9);
+    const lngSpan = Math.max((maxLng - minLng) * Math.cos((minLat + maxLat) / 2 * Math.PI / 180), 1e-9);
+
+    const scale = Math.min((SIZE - PADDING * 2) / lngSpan, (SIZE - PADDING * 2) / latSpan) * 0.68;
+    const cosLat = Math.cos((minLat + maxLat) / 2 * Math.PI / 180);
+
+    const centerLng = (minLng + maxLng) / 2;
+    const centerLat = (minLat + maxLat) / 2;
+    const shapePoints = points.map(p => ({
+        x: (p.lng - centerLng) * cosLat * scale,
+        y: -(p.lat - centerLat) * scale
+    }));
+
+    const random = seededRandom(seed || 1);
+
+    const hasWeather = weather && weather.weatherCode !== -1 && !Number.isNaN(weather.temperatureCelsius);
+    const hue = hasWeather ? temperatureToHue(weather.temperatureCelsius) : Math.floor(random() * 360);
+    const style = (hasWeather && weatherStyle(weather.weatherCode)) || {
+        blobCount: [5, 8], blobAlpha: 0.35, saturation: 75, lightness: 32, lineAlpha: 0.55, lineWidth: 1.6, layers: [3, 8]
+    };
+
+    drawWatercolorBackground(ctx, SIZE, random, hue, style);
+
+    const [minLayers, maxLayers] = style.layers;
+    const layers = minLayers + Math.floor(random() * (maxLayers - minLayers + 1));
+
+        ctx.save();
+    ctx.translate(SIZE / 2, SIZE / 2);
+
+    const mode = style.mode || ['kaleidoscope', 'flow', 'particles'][Math.floor(random() * 3)];
+    if (mode === 'kaleidoscope') {
+        drawKaleidoscope(ctx, shapePoints, hue, style, random);
+    } else if (mode === 'flow') {
+        drawFlow(ctx, shapePoints, hue, style, random);
+    } else {
+        drawParticles(ctx, shapePoints, hue, style, random);
+    }
+
+    ctx.restore();
+}
+
+   function redrawAll() {
+    document.querySelectorAll('#gallery canvas').forEach(canvas => {
+        if (canvas._points) drawRoute(canvas, canvas._points, canvas._id, canvas._weather);
+    });
     }
 
     const TYPE_NAMES = {
@@ -582,6 +665,7 @@
         canvas.setAttribute('aria-label', 'Rutetegning: ' + (activity.name || 'aktivitet'));
         canvas._points = activity.points;
         canvas._id = activity.id;
+        canvas._weather = activity.weatherInfo;
         card.appendChild(canvas);
 
         const body = document.createElement('div');
@@ -610,7 +694,7 @@
         card.appendChild(body);
         gallery.appendChild(card);
 
-        drawRoute(canvas, activity.points, activity.id);
+        drawRoute(canvas, activity.points, activity.id, activity.weatherInfo);
     }
 
     function loadActivities() {

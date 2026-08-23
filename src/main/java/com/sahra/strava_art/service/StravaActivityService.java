@@ -2,12 +2,14 @@ package com.sahra.strava_art.service;
 
 import com.sahra.strava_art.dto.ActivityDto;
 import com.sahra.strava_art.dto.RoutePoint;
+import com.sahra.strava_art.dto.WeatherInfo;
 import com.sahra.strava_art.dto.TokenData;
 import com.sahra.strava_art.util.PolylineDecoder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,9 +19,11 @@ public class StravaActivityService {
 
     private final RestClient restClient = RestClient.create();
     private final StravaAuthService authService;
+    private final WeatherService weatherService;
 
-    public StravaActivityService(StravaAuthService authService) {
+    public StravaActivityService(StravaAuthService authService, WeatherService weatherService) {
         this.authService = authService;
+        this.weatherService = weatherService;
     }
 
     public List<ActivityDto> getActivities() {
@@ -40,7 +44,6 @@ public class StravaActivityService {
                 .filter(Objects::nonNull)
                 .toList();
     }
-
     @SuppressWarnings("unchecked")
     private ActivityDto toActivityDto(Map<String, Object> raw) {
         Map<String, Object> map = (Map<String, Object>) raw.get("map");
@@ -59,7 +62,23 @@ public class StravaActivityService {
                 : 0.0;
 
         List<RoutePoint> points = PolylineDecoder.decode(polyline);
+        WeatherInfo weather = fetchWeather(points, date);
 
-        return new ActivityDto(id, name, type, date, distance, elevation, points);
+        return new ActivityDto(id, name, type, date, distance, elevation, points, weather);
     }
+
+    private WeatherInfo fetchWeather(List<RoutePoint> points, String date) {
+        if (points.isEmpty() || date == null) {
+            return WeatherInfo.unknown();
+        }
+        double centroidLat = points.stream().mapToDouble(RoutePoint::lat).average().orElse(0);
+        double centroidLng = points.stream().mapToDouble(RoutePoint::lng).average().orElse(0);
+        try {
+            Instant activityStart = Instant.parse(date);
+            return weatherService.getWeatherForActivity(centroidLat, centroidLng, activityStart);
+        } catch (Exception e) {
+            return WeatherInfo.unknown();
+        }
+    }
+
 }

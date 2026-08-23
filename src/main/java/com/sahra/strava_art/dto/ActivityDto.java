@@ -9,6 +9,7 @@ public record ActivityDto(
         String date,
         double distanceMeters,
         double elevationGainMeters,
-        List<RoutePoint> points
+        List<RoutePoint> points,
+        WeatherInfo weatherInfo
 ) {
 }
