@@ -7,12 +7,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --display:     "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
+            --display:     "Plus Jakarta Sans", ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
             --mono:        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
             --bg:          #f4efe4;
@@ -156,8 +155,6 @@
         .hero h1 {
             margin: 0;
             font-family: var(--display);
-            font-optical-sizing: none;
-            font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
             font-weight: 300;
             font-size: clamp(3rem, 8.5vw, 6rem);
             line-height: 0.92;
@@ -166,7 +163,6 @@
 
         .hero h1 em {
             font-style: italic;
-            font-variation-settings: "opsz" 144, "SOFT" 90, "WONK" 1;
         }
 
         .hero p {
@@ -239,8 +235,7 @@
 
         .stat-value {
             font-family: var(--display);
-            font-optical-sizing: none;
-            font-variation-settings: "opsz" 40, "SOFT" 50, "WONK" 1;
+
             font-weight: 400;
             font-size: 1.45rem;
             line-height: 1.1;
@@ -319,8 +314,7 @@
         .card-title {
             margin: 9px 0 0;
             font-family: var(--display);
-            font-optical-sizing: none;
-            font-variation-settings: "opsz" 40, "SOFT" 60, "WONK" 1;
+
             font-size: 1.15rem;
             font-weight: 400;
             line-height: 1.25;
@@ -346,8 +340,7 @@
             display: block;
             margin-bottom: 8px;
             font-family: var(--display);
-            font-optical-sizing: none;
-            font-variation-settings: "opsz" 60, "SOFT" 60, "WONK" 1;
+
             font-size: 1.5rem;
             font-weight: 400;
             color: var(--ink);
@@ -409,7 +402,7 @@
                 <path d="M2 13c2.5 0 3-9 6-9s3.5 9 6 9" stroke="currentColor" stroke-width="1.4"
                       stroke-linecap="round"/>
             </svg>
-            Ruter → Kunst
+
         </div>
 
         <button class="theme-toggle" id="themeToggle" type="button"
@@ -429,9 +422,8 @@
 
     <header class="hero">
         <div class="hero-main">
-            <h1>Rutene dine,<br><em>som kunst.</em></h1>
-            <p>Hver tur du har løpt eller syklet blir tegnet opp som en egen strek. Koble til
-                Strava for å se samlingen din.</p>
+            <h1>routeprints</h1>
+            <p>hver tur du har løpt eller syklet blir tegnet opp som en egen strek. </p>
             <div class="actions">
                 <a class="btn" href="/login" id="loginBtn">Logg inn med Strava <span aria-hidden="true">→</span></a>
                 <button class="btn btn-ghost" id="refreshBtn" type="button">Oppdater</button>
