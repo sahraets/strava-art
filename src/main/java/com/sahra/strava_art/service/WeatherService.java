@@ -15,7 +15,11 @@ import java.util.Map;
 @Service
 public class WeatherService {
 
-    private final RestClient restClient = RestClient.create();
+    private final RestClient restClient;
+
+    public WeatherService(RestClient restClient) {
+        this.restClient = restClient;
+    }
 
     public WeatherInfo getWeatherForActivity(double lat, double lng, Instant activityStart) {
         String date = activityStart.atOffset(ZoneOffset.UTC).toLocalDate().toString();

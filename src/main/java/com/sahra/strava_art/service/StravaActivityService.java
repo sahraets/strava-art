@@ -17,11 +17,12 @@ import java.util.Objects;
 @Service
 public class StravaActivityService {
 
-    private final RestClient restClient = RestClient.create();
+    private final RestClient restClient;
     private final StravaAuthService authService;
     private final WeatherService weatherService;
 
-    public StravaActivityService(StravaAuthService authService, WeatherService weatherService) {
+    public StravaActivityService(RestClient restClient, StravaAuthService authService, WeatherService weatherService) {
+        this.restClient = restClient;
         this.authService = authService;
         this.weatherService = weatherService;
     }

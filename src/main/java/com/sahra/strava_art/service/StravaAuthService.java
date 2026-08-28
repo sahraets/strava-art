@@ -24,10 +24,11 @@ public class StravaAuthService {
     @Value("${strava.redirect-uri}")
     private String redirectUri;
 
-    private final RestClient restClient = RestClient.create();
+    private final RestClient restClient;
     private final StravaTokenStore tokenStore;
 
-    public StravaAuthService(StravaTokenStore tokenStore) {
+    public StravaAuthService(RestClient restClient, StravaTokenStore tokenStore) {
+        this.restClient = restClient;
         this.tokenStore = tokenStore;
     }
 
