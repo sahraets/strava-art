@@ -3,7 +3,7 @@
 Turns your Strava activities into generative art. Every run or ride becomes a unique
 canvas drawing — and the weather from the day you trained decides how it looks.
 
-![The app's landing view: an oversized serif headline reading "Rutene dine, som kunst" with a summary of activities, distance and elevation](docs/images/hero.png)
+![The app's landing view before logging in: an oversized headline reading "routeprints", a Norwegian tagline, and monospaced links to log in with Strava or refresh](docs/images/hero.png)
 
 ## The idea
 
